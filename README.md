@@ -4,7 +4,7 @@ The main idea is to include as many possible settings (capabilities) for a given
 This is to allow you to easily adjust the required settings to a given test case.
 
 
-#remarks
+# Remarks
 /docs was imported form 
 https://github.com/Danp2/au3WebDriver/tree/master/docs
 
