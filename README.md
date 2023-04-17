@@ -8,4 +8,4 @@ This is to allow you to easily adjust the required settings to a given test case
 /docs was imported form 
 https://github.com/Danp2/au3WebDriver/tree/master/docs
 
-Thanks to @danp2 and @Sven-Seyfert
+Thanks to [@danp2](https://github.com/Danp2) and [@Sven-Seyfert](https://github.com/Sven-Seyfert)
