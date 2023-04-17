@@ -36,8 +36,10 @@ EndFunc   ;==>_Example
 Func _WD_Initialization($sBrowser, $bHeadless = False)
 ;~ 	$_WD_DEBUG = $_WD_DEBUG_None ; details are not provided only set @error and @extended
 ;~ 	$_WD_DEBUG = $_WD_DEBUG_Error ; Gives minimized level of details
-;~ 	$_WD_DEBUG = $_WD_DEBUG_Info ; Gives you optimized level of details
-	$_WD_DEBUG = $_WD_DEBUG_Full ; Gives you the greatest level of details
+	$_WD_DEBUG = $_WD_DEBUG_Info ; Gives you optimized level of details
+
+	#REMARK about $_WD_DEBUG_Full usage ; it will also sent yours sensitive/protected/personal data to the log
+;~ 	$_WD_DEBUG = $_WD_DEBUG_Full ; Gives you the greatest level of details
 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('console', @ScriptDir & "\Au3WebDriver_Testing_" & $sTimeStamp & ".log")
 
