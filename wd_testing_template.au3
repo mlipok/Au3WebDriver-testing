@@ -102,10 +102,42 @@ Func SetupChrome($bHeadless)
 	_WD_Option('DriverParams', '--verbose --log-path="' & @ScriptDir & '\chrome.log"')
 
 	_WD_CapabilitiesStartup()
-	_WD_CapabilitiesAdd('alwaysMatch', 'chrome')
+	_WD_CapabilitiesAdd('alwaysMatch')
+	_WD_CapabilitiesAdd('acceptInsecureCerts', True)
+	_WD_CapabilitiesAdd('firstMatch', 'chrome')
+	_WD_CapabilitiesAdd('browserName', 'chrome')
 	_WD_CapabilitiesAdd('w3c', True)
+	_WD_CapabilitiesAdd('args', 'user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win' & StringReplace(@OSArch, 'X', '') & '; ' & @CPUArch & ') AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' & _WD_GetBrowserVersion('chrome') & ' Safari/537.36')
+	_WD_CapabilitiesAdd('args', 'user-data-dir', $s_Browser_Profile_Dir)
+	_WD_CapabilitiesAdd('args', '--profile-directory', Default)
+	_WD_CapabilitiesAdd('args', 'start-maximized')
+	_WD_CapabilitiesAdd('args', 'disable-infobars')
+	_WD_CapabilitiesAdd('args', '--no-sandbox')
+	_WD_CapabilitiesAdd('args', '--disable-blink-features=AutomationControlled')
+	_WD_CapabilitiesAdd('args', '--disable-web-security')
+	_WD_CapabilitiesAdd('args', '--allow-running-insecure-content')     ; https://stackoverflow.com/a/60409220
+	_WD_CapabilitiesAdd('args', '--ignore-certificate-errors')     ; https://stackoverflow.com/a/60409220
+	_WD_CapabilitiesAdd('args', '--guest')
+	If $b_Headless Then _
+			_WD_CapabilitiesAdd('args', '--headless')
+
+	_WD_CapabilitiesAdd('prefs', 'credentials_enable_service', False)     ; https://www.autoitscript.com/forum/topic/191990-webdriver-udf-w3c-compliant-version-12272021/?do=findComment&comment=1464829
+	_WD_CapabilitiesAdd('prefs', 'download.default_directory', $s_Download_dir)
+
+	#Region - downloading files
+	; https://scripteverything.com/download-pdf-selenium-python/
+	; https://www.autoitscript.com/forum/topic/209816-download-pdf-file-while-using-webdriver/?do=findComment&comment=1514582
+	_WD_CapabilitiesAdd('prefs', 'download.prompt_for_download', False)
+	_WD_CapabilitiesAdd('prefs', 'download.open_pdf_in_system_reader', False)
+	_WD_CapabilitiesAdd('prefs', 'plugins.always_open_pdf_externally', True)
+	_WD_CapabilitiesAdd('prefs', 'profile.default_content_settings.popups', 0)
+	#EndRegion - downloading files
+
+	_WD_CapabilitiesAdd('excludeSwitches', 'disable-popup-blocking')     ; https://help.applitools.com/hc/en-us/articles/360007189411--Chrome-is-being-controlled-by-automated-test-software-notification
 	_WD_CapabilitiesAdd('excludeSwitches', 'enable-automation')
-	If $bHeadless Then _WD_CapabilitiesAdd('args', '--headless')
+	_WD_CapabilitiesAdd('excludeSwitches', 'enable-logging')
+	_WD_CapabilitiesAdd('excludeSwitches', 'load-extension')
+;~ 	_WD_CapabilitiesAdd('excludeSwitches', 'disable-composited-antialiasing') ; ??  https://source.chromium.org/chromium/chromium/src/+/main:cc/base/switches.cc
 
 	Local $sCapabilities = _WD_CapabilitiesGet()
 	Return $sCapabilities
