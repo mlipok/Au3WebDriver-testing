@@ -100,9 +100,10 @@ Func SetupGecko($bHeadless)
 EndFunc   ;==>SetupGecko
 
 Func SetupChrome($bHeadless, $s_Download_dir = '')
+	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('Driver', 'chromedriver.exe')
 	_WD_Option('Port', 9515)
-	_WD_Option('DriverParams', '--verbose --log-path="' & @ScriptDir & '\chrome.log"')
+	_WD_Option('DriverParams', '--verbose --log-path="' & @ScriptDir & '\' & $sTimeStamp & ' chrome.log"')
 
 	_WD_CapabilitiesStartup()
 	_WD_CapabilitiesAdd('alwaysMatch')
@@ -149,9 +150,10 @@ Func SetupChrome($bHeadless, $s_Download_dir = '')
 EndFunc   ;==>SetupChrome
 
 Func SetupEdge($bHeadless, $s_Download_dir = '')
+	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('Driver', 'msedgedriver.exe')
 	_WD_Option('Port', 9515)
-	_WD_Option('DriverParams', '--verbose --log-path="' & @ScriptDir & '\msedge.log"')
+	_WD_Option('DriverParams', '--verbose --log-path="' & @ScriptDir & '\' & $sTimeStamp & ' msedge.log"')
 
 	_WD_CapabilitiesStartup()
 	_WD_CapabilitiesAdd('alwaysMatch', 'msedge')
@@ -193,9 +195,10 @@ Func SetupEdge($bHeadless, $s_Download_dir = '')
 EndFunc   ;==>SetupEdge
 
 Func SetupOpera($bHeadless, $s_Download_dir = '')
+	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('Driver', 'operadriver.exe')
 	_WD_Option('Port', 9515)
-	_WD_Option('DriverParams', '--verbose --log-path="' & @ScriptDir & '\opera.log"')
+	_WD_Option('DriverParams', '--verbose --log-path="' & @ScriptDir & '\' & $sTimeStamp & ' opera.log"')
 
 	_WD_CapabilitiesStartup()
 	_WD_CapabilitiesAdd('alwaysMatch', 'opera')
