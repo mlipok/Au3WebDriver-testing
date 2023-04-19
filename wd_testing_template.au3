@@ -18,6 +18,7 @@ Func _Main()
 ;~ 	_WD_Initialization('chrome', False)
 ;~ 	_WD_Initialization('msedge', False)
 ;~ 	_WD_Initialization('opera', False)
+;~ 	_WD_Initialization('IEDriver', False)
 
 	_Example()
 	_WD_CleanUp()
@@ -58,6 +59,9 @@ Func _WD_Initialization($sBrowser, $bHeadless = False)
 		Case 'opera'
 			_WD_UpdateDriver('opera')
 			$sCapabilities = SetupOpera($bHeadless, $s_Download_dir)
+		Case 'IEDriver'
+			; _WD_UpdateDriver('IEDriver') ; not supported - as for now you should update it manually from https://www.selenium.dev/downloads/
+			$sCapabilities = SetupIEDriver()
 	EndSwitch
 	_WD_CapabilitiesDump(@ScriptLineNumber) ; dump current Capabilities setting to console - only for testing
 	_WD_Startup()
@@ -252,5 +256,29 @@ Func SetupOpera($bHeadless, $s_Download_dir = '')
 	Local $sCapabilities = _WD_CapabilitiesGet()
 	Return $sCapabilities
 EndFunc   ;==>SetupOpera
+
+Func SetupIEDriver() ; this is for MS Edge IE Mode
+	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
+	; https://www.selenium.dev/documentation/ie_driver_server/#required-configuration
+	_WD_Option('Driver', 'IEDriverServer.exe') ;
+	_WD_Option('DriverParams', '--verbose --log-path="' & @ScriptDir & '\' & $sTimeStamp & ' opera.log" --log trace')
+	_WD_Option('Port', 5555)
+;~ 	Local $sCapabilities = '{"capabilities": {"alwaysMatch": { "se:ieOptions" : { "ie.edgepath":"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "ie.edgechromium":true, "ignoreProtectedModeSettings":true,"excludeSwitches": ["enable-automation"]}}}}'
+	Local $sCapabilities = _
+			'{' & @CRLF & _
+			'    "capabilities": {' & @CRLF & _
+			'        "alwaysMatch": {' & @CRLF & _
+			'            "se:ieOptions": {' & @CRLF & _
+			'                "ie.edgepath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",' & @CRLF & _
+			'                "ie.edgechromium":true,' & @CRLF & _
+			'                "ignoreProtectedModeSettings":true,' & @CRLF & _
+			'                "excludeSwitches": ["enable-automation"]' & @CRLF & _
+			'            }' & @CRLF & _
+			'        }' & @CRLF & _
+			'    }' & @CRLF & _
+			'}' & @CRLF & _
+			''
+	Return $sCapabilities
+EndFunc   ;==>SetupIEDriver
 
 #EndRegion - WD SETUP
