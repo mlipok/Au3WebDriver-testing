@@ -49,7 +49,7 @@ Func _WD_Initialization($sBrowser, $bHeadless = False)
 	Switch $sBrowser
 		Case 'firefox'
 			_WD_UpdateDriver('firefox')
-			$sCapabilities = SetupGecko($bHeadless)
+			$sCapabilities = SetupGecko($bHeadless, $s_Download_dir)
 		Case 'chrome'
 			_WD_UpdateDriver('chrome')
 			$sCapabilities = SetupChrome($bHeadless, $s_Download_dir)
@@ -76,10 +76,11 @@ Func _WD_CleanUp()
 	_WD_Shutdown()
 EndFunc   ;==>_WD_CleanUp
 
-Func SetupGecko($bHeadless)
+Func SetupGecko($bHeadless, $s_Download_dir = '')
+;~ 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('Driver', 'geckodriver.exe')
-	_WD_Option('DriverParams', '--log trace')
-	_WD_Option('Port', 4444)
+	_WD_Option('Port', _WD_GetFreePort(4444, 4500))
+	_WD_Option('DriverParams', '--log trace --port=' & $_WD_PORT)
 
 	_WD_CapabilitiesStartup()
 	_WD_CapabilitiesAdd('alwaysMatch', 'firefox')
@@ -88,6 +89,36 @@ Func SetupGecko($bHeadless)
 	If $bHeadless Then _WD_CapabilitiesAdd('args', '--headless')
 	_WD_CapabilitiesAdd('args', '-profile')
 	_WD_CapabilitiesAdd('args', @LocalAppDataDir & '\Mozilla\Firefox\Profiles\WD_Testing_Profile')
+
+	; https://stackoverflow.com/questions/33695690/webdriver-set-initial-url
+;~ 	_WD_CapabilitiesAdd('prefs', 'rowser.startup.homepage', 'about:blank')
+;~ 	_WD_CapabilitiesAdd('prefs', 'startup.homepage_welcome_url', 'about:blank')
+;~ 	_WD_CapabilitiesAdd('prefs', 'startup.homepage_welcome_url.additional', 'about:blank')
+
+	; avoid updates
+	_WD_CapabilitiesAdd('prefs', 'browser.search.update', False)
+	_WD_CapabilitiesAdd('prefs', 'extensions.update.autoUpdate', False)
+	_WD_CapabilitiesAdd('prefs', 'extensions.update.autoUpdateEnabled', False)
+	_WD_CapabilitiesAdd('prefs', 'extensions.update.enabled', False)
+	_WD_CapabilitiesAdd('prefs', 'update_notifications.enabled', False)
+	_WD_CapabilitiesAdd('prefs', 'update.showSlidingNotification', False)
+	_WD_CapabilitiesAdd('prefs', 'app.update.auto', False)
+	_WD_CapabilitiesAdd('prefs', 'app.update.enabled', False)
+
+	If $s_Download_dir Then
+		_WD_CapabilitiesAdd("prefs", "pdfjs.disabled", True)
+		_WD_CapabilitiesAdd("prefs", "browser.download.folderList", 2)
+		_WD_CapabilitiesAdd("prefs", "browser.download.dir", $s_Download_dir)
+		_WD_CapabilitiesAdd("prefs", "browser.helperApps.neverAsk.saveToDisk", "application/zip, application/pdf, application/octet-stream, application/xml, text/xml, text/plain")
+		_WD_CapabilitiesAdd("prefs", "browser.helperApps.neverAsk.openFile", "application/zip, application/pdf, application/octet-stream, application/xml, text/xml, text/plain")
+		_WD_CapabilitiesAdd('prefs', 'browser.helperApps.alwaysAsk.force', False)
+		_WD_CapabilitiesAdd("prefs", "browser.download.useDownloadDir", True)
+		_WD_CapabilitiesAdd("prefs", "browser.download.alwaysOpenPanel", False)
+
+		; CLEANUP for GDPR reason
+		_WD_CapabilitiesAdd('prefs', 'browser.helperApps.deleteTempFileOnExit', True)
+	EndIf
+
 
 	; REMARKS
 	; When using 32bit geckodriver.exe, you may need to set 'binary' option.
