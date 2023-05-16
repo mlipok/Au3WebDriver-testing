@@ -18,7 +18,7 @@ EndFunc   ;==>_Main
 ```
 
 # Remarks
-/docs was imported form 
+/docs was imported from 
 https://github.com/Danp2/au3WebDriver/tree/master/docs
 
 Thanks to [@danp2](https://github.com/Danp2) and [@Sven-Seyfert](https://github.com/Sven-Seyfert)
