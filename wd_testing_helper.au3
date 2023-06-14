@@ -35,19 +35,19 @@ Func _WD_Initialization($sBrowser, $bHeadless = False, $bLogToFile = True)
 	Switch $sBrowser
 		Case 'firefox'
 			_WD_UpdateDriver('firefox')
-			$sCapabilities = SetupGecko($bHeadless, $s_Download_dir)
+			$sCapabilities = _WD_SetupGecko($bHeadless, $s_Download_dir)
 		Case 'chrome'
 			_WD_UpdateDriver('chrome')
-			$sCapabilities = SetupChrome($bHeadless, $s_Download_dir, $bLogToFile)
+			$sCapabilities = _WD_SetupChrome($bHeadless, $s_Download_dir, $bLogToFile)
 		Case 'msedge'
 			_WD_UpdateDriver('msedge')
-			$sCapabilities = SetupEdge($bHeadless, $s_Download_dir, $bLogToFile)
+			$sCapabilities = _WD_SetupEdge($bHeadless, $s_Download_dir, $bLogToFile)
 		Case 'opera'
 			_WD_UpdateDriver('opera')
-			$sCapabilities = SetupOpera($bHeadless, $s_Download_dir, $bLogToFile)
+			$sCapabilities = _WD_SetupOpera($bHeadless, $s_Download_dir, $bLogToFile)
 		Case 'msedgeie'
 			_WD_UpdateDriver('msedgeie', Default, False)
-			$sCapabilities = SetupEdgeIEMode($bHeadless, $s_Download_dir, $bLogToFile)
+			$sCapabilities = _WD_SetupEdgeIEMode($bHeadless, $s_Download_dir, $bLogToFile)
 	EndSwitch
 	_WD_CapabilitiesDump(@ScriptLineNumber) ; dump current Capabilities setting to console - only for testing
 	_WD_Startup()
@@ -62,7 +62,7 @@ Func _WD_CleanUp()
 	_WD_Shutdown()
 EndFunc   ;==>_WD_CleanUp
 
-Func SetupGecko($bHeadless, $s_Download_dir = '')
+Func _WD_SetupGecko($bHeadless, $s_Download_dir = '')
 ;~ 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('Driver', 'geckodriver.exe')
 	_WD_Option('Port', _WD_GetFreePort())
@@ -120,7 +120,7 @@ Func SetupGecko($bHeadless, $s_Download_dir = '')
 	Return $sCapabilities
 EndFunc   ;==>SetupGecko
 
-Func SetupChrome($bHeadless, $s_Download_dir = '', $bLogToFile = False)
+Func _WD_SetupChrome($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('Driver', 'chromedriver.exe')
 	_WD_Option('Port', _WD_GetFreePort())
@@ -172,7 +172,7 @@ Func SetupChrome($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Return $sCapabilities
 EndFunc   ;==>SetupChrome
 
-Func SetupEdge($bHeadless, $s_Download_dir = '', $bLogToFile = False)
+Func _WD_SetupEdge($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('Driver', 'msedgedriver.exe')
 	_WD_Option('Port', _WD_GetFreePort())
@@ -222,7 +222,7 @@ Func SetupEdge($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Return $sCapabilities
 EndFunc   ;==>SetupEdge
 
-Func SetupOpera($bHeadless, $s_Download_dir = '', $bLogToFile = False)
+Func _WD_SetupOpera($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	_WD_Option('Driver', 'operadriver.exe')
 	_WD_Option('Port', _WD_GetFreePort())
@@ -285,7 +285,7 @@ Func SetupOpera($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Return $sCapabilities
 EndFunc   ;==>SetupOpera
 
-Func SetupEdgeIEMode($bHeadless, $s_Download_dir = '', $bLogToFile = False) ; this is for MS Edge IE Mode
+Func _WD_SetupEdgeIEMode($bHeadless, $s_Download_dir = '', $bLogToFile = False) ; this is for MS Edge IE Mode
 	#forceref $bHeadless, $s_Download_dir ; it is Not passed from MSEdge To IE instance, like many others capabilities
 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
 	; https://www.selenium.dev/documentation/ie_driver_server/#required-configuration
