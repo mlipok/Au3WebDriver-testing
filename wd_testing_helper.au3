@@ -148,6 +148,7 @@ Func SetupChrome($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 			_WD_CapabilitiesAdd('args', '--headless')
 
 	_WD_CapabilitiesAdd('prefs', 'credentials_enable_service', False)     ; https://www.autoitscript.com/forum/topic/191990-webdriver-udf-w3c-compliant-version-12272021/?do=findComment&comment=1464829
+	_WD_CapabilitiesAdd('prefs', 'profile.password_manager_enabled', False)     ; https://sqa.stackexchange.com/a/26515/14581
 	#Region - downloading files
 	If $s_Download_dir Then
 		_WD_CapabilitiesAdd('prefs', 'download.default_directory', $s_Download_dir)
