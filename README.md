@@ -6,7 +6,9 @@ This is to allow you to easily adjust the required settings to a given test case
 **How it is different than _wd_demo.au3_** ?
 - has no gui, thus you can easily start coding your own script, as the structure **_wd_testing_template.au3_** is much simpler
 - all configurations try to take advantage of as many capabilities as we already know, based on the principle that they are easier to remove than to add
-- code is ready to use just you need to change example to your own stuff and you can start for example:
+- code is ready to use just you need to change example to your own stuff and you can start.
+
+**For example:**
 
 FireFox with this following snippet
 ```autoit
