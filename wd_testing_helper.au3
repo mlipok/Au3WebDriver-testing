@@ -91,6 +91,10 @@ Func _WD_SetupGecko($bHeadless, $s_Download_dir = '')
 	_WD_CapabilitiesAdd('prefs', 'app.update.auto', False)
 	_WD_CapabilitiesAdd('prefs', 'app.update.enabled', False)
 
+	; How to prevent Firefox to auto-check “remember decision” in certificates choice?
+	; https://discourse.mozilla.org/t/how-to-prevent-firefox-to-auto-check-remember-decision-in-certificates-choice/88062
+	_WD_CapabilitiesAdd("prefs", "security.remember_cert_checkbox_default_setting", False)
+
 	If $s_Download_dir Then
 		_WD_CapabilitiesAdd("prefs", "pdfjs.disabled", True)
 		_WD_CapabilitiesAdd("prefs", "browser.download.folderList", 2)
