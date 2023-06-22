@@ -78,7 +78,7 @@ Func _Example()
 	Local $aLocationOfElement2 = _WD_FrameListFindElement($__g_sSession, $_WD_LOCATOR_ByCSSSelector, $sCSSSelector)
 	If @error Then Return SetError(@error, @extended, 0)
 
-	_ArrayDisplay($aLocationOfElement2, '$aLocationOfElement1', 0, 0, Default, $sArrayHeader)
+	_ArrayDisplay($aLocationOfElement2, '$aLocationOfElement2', 0, 0, Default, $sArrayHeader)
 
 	Local $sElement2 = _WD_FindElement($__g_sSession, $_WD_LOCATOR_ByCSSSelector, $sCSSSelector)
 	If @error Then Return SetError(@error, @extended, 0)
