@@ -37,7 +37,13 @@ Func _WD_Initialization($sBrowser, $bHeadless = False, $bLogToFile = True)
 			_WD_UpdateDriver('firefox')
 			$sCapabilities = _WD_SetupGecko($bHeadless, $s_Download_dir)
 		Case 'chrome'
-			_WD_UpdateDriver('chrome')
+			#Region - Chrome driver update
+			Local $sBrowserVersion = _WD_GetBrowserVersion($sBrowser)
+			If Not @error And $sBrowser = "chrome" Then
+				Local $i_Check = _VersionCompare("115.0.0.0", $sBrowserVersion)
+				If Not @error And $i_Check = 1 Then $sBrowser = "chrome_legacy"
+			EndIf
+			#EndRegion - Chrome driver update
 			$sCapabilities = _WD_SetupChrome($bHeadless, $s_Download_dir, $bLogToFile)
 		Case 'msedge'
 			_WD_UpdateDriver('msedge')
