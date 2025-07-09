@@ -4,9 +4,9 @@
 #SciTE4AutoIt3_Dynamic_Include=y
 #SciTE4AutoIt3_Dynamic_Include_whiletyping=y
 
+#include <Array.au3>
 #include <MsgBoxConstants.au3>
 #include <String.au3>
-#include <Array.au3>
 
 #include "wd_helper.au3"
 #include "wd_capabilities.au3"
@@ -57,11 +57,11 @@ Func _WD_Initialization($sBrowser, $bHeadless = False, $bLogToFile = True)
 	_WD_Startup()
 	$__g_sSession = _WD_CreateSession($sCapabilities)
 	If Not @error Then _WD_Window($__g_sSession, "maximize")
-	MsgBox($MB_TOPMOST, "TEST #" & @ScriptLineNumber, "Wait after session creation - to have possibility to check logs, and browser state")
+	If Not @Compiled Then MsgBox($MB_TOPMOST, "TEST #" & @ScriptLineNumber, "Wait after session creation - to have possibility to check logs, and browser state")
 EndFunc   ;==>_WD_Initialization
 
 Func _WD_CleanUp()
-	MsgBox($MB_TOPMOST, "TEST #" & @ScriptLineNumber, "Wait before end - to have possibility to check logs, and browser state")
+	If Not @Compiled Then MsgBox($MB_TOPMOST, "TEST #" & @ScriptLineNumber, "Wait before end - to have possibility to check logs, and browser state")
 	_WD_DeleteSession($__g_sSession)
 	_WD_Shutdown()
 EndFunc   ;==>_WD_CleanUp
