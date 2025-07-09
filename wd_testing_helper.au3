@@ -116,6 +116,28 @@ Func _WD_SetupGecko($bHeadless, $s_Download_dir = '')
 	EndIf
 
 
+	If Not @Compiled Then
+		#cs https://firefox-source-docs.mozilla.org/testing/geckodriver/TraceLogs.html
+			The different log bands are, in ascending bandwidth:
+				fatal is reserved for exceptional circumstances when geckodriver or Firefox cannot recover. This usually entails that either one or both of the processes will exit.
+				error messages are mistakes in the program code which it is possible to recover from.
+				warn shows warnings of more informative nature that are not necessarily problems in geckodriver. This could for example happen if you use the legacy desiredCapabilities/requiredCapabilities objects instead of the new alwaysMatch/firstMatch structures.
+				info (default) contains information about which port geckodriver binds to, but also all messages from the lower-bandwidth levels listed above.
+				config additionally shows the negotiated capabilities after matching the alwaysMatch capabilities with the sequence of firstMatch capabilities.
+				debug is reserved for information that is useful when programming.
+				trace, where in addition to itself, all previous levels are included. The trace level shows all HTTP requests received by geckodriver, packets sent to and from the remote protocol in Firefox, and responses sent back to your client.
+			In other words this means that the configured level will coalesce entries from all lower bands including itself. If you set the log level to error, you will get log entries for both fatal and error. Similarly for trace, you will get all the logs that are offered.
+		#CE https://firefox-source-docs.mozilla.org/testing/geckodriver/TraceLogs.html
+
+;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'fatal')
+;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'error')
+;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'warn')
+;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'info')
+;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'config')
+		_WD_CapabilitiesAdd( 'log', 'level', 'debug')
+;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'trace')
+	EndIf
+
 	; REMARKS
 	; When using 32bit geckodriver.exe, you may need to set 'binary' option.
 	; This shouldn't be needed when using 64bit geckodriver.exe,
