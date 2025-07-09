@@ -116,7 +116,7 @@ Func _WD_SetupGecko($bHeadless, $s_Download_dir = '')
 	EndIf
 
 
-	If Not @Compiled Then
+	If Not @Compiled Or $_WD_DEBUG = $_WD_DEBUG_Full Then
 		#cs https://firefox-source-docs.mozilla.org/testing/geckodriver/TraceLogs.html
 			The different log bands are, in ascending bandwidth:
 				fatal is reserved for exceptional circumstances when geckodriver or Firefox cannot recover. This usually entails that either one or both of the processes will exit.
