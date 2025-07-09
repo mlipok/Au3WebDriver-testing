@@ -32,27 +32,25 @@ Func _WD_Initialization($sBrowser, $bHeadless = False, $bLogToFile = True)
 	Local $s_Download_dir = @ScriptDir & "\Au3WebDriver_DownloadDir"
 
 	Local $sCapabilities = ''
+	#Region - Chrome legacy checking
+	Local $sBrowserVersion = _WD_GetBrowserVersion($sBrowser)
+	If Not @error And $sBrowser = 'chrome' Then
+		Local $i_Check = _VersionCompare('115.0.0.0', $sBrowserVersion)
+		If Not @error And $i_Check = 1 Then $sBrowser = 'chrome_legacy'
+	EndIf
+	#EndRegion - Chrome legacy checking
+	_WD_UpdateDriver($sBrowser)
+
 	Switch $sBrowser
 		Case 'firefox'
-			_WD_UpdateDriver('firefox')
 			$sCapabilities = _WD_SetupGecko($bHeadless, $s_Download_dir)
-		Case 'chrome'
-			#Region - Chrome driver update
-			Local $sBrowserVersion = _WD_GetBrowserVersion($sBrowser)
-			If Not @error And $sBrowser = "chrome" Then
-				Local $i_Check = _VersionCompare("115.0.0.0", $sBrowserVersion)
-				If Not @error And $i_Check = 1 Then $sBrowser = "chrome_legacy"
-			EndIf
-			#EndRegion - Chrome driver update
+		Case 'chrome', 'chrome_legacy'
 			$sCapabilities = _WD_SetupChrome($bHeadless, $s_Download_dir, $bLogToFile)
 		Case 'msedge'
-			_WD_UpdateDriver('msedge')
 			$sCapabilities = _WD_SetupEdge($bHeadless, $s_Download_dir, $bLogToFile)
 		Case 'opera'
-			_WD_UpdateDriver('opera')
 			$sCapabilities = _WD_SetupOpera($bHeadless, $s_Download_dir, $bLogToFile)
 		Case 'msedgeie'
-			_WD_UpdateDriver('msedgeie', Default, False)
 			$sCapabilities = _WD_SetupEdgeIEMode($bHeadless, $s_Download_dir, $bLogToFile)
 	EndSwitch
 	_WD_CapabilitiesDump(@ScriptLineNumber) ; dump current Capabilities setting to console - only for testing
@@ -115,7 +113,6 @@ Func _WD_SetupGecko($bHeadless, $s_Download_dir = '')
 		_WD_CapabilitiesAdd('prefs', 'browser.helperApps.deleteTempFileOnExit', True)
 	EndIf
 
-
 	If Not @Compiled Or $_WD_DEBUG = $_WD_DEBUG_Full Then
 		#cs https://firefox-source-docs.mozilla.org/testing/geckodriver/TraceLogs.html
 			The different log bands are, in ascending bandwidth:
@@ -150,7 +147,7 @@ Func _WD_SetupGecko($bHeadless, $s_Download_dir = '')
 
 	Local $sCapabilities = _WD_CapabilitiesGet()
 	Return $sCapabilities
-EndFunc   ;==>SetupGecko
+EndFunc   ;==>_WD_SetupGecko
 
 Func _WD_SetupChrome($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
@@ -168,6 +165,8 @@ Func _WD_SetupChrome($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	_WD_CapabilitiesAdd('args', 'user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win' & StringReplace(@OSArch, 'X', '') & '; ' & @CPUArch & ') AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' & _WD_GetBrowserVersion('chrome') & ' Safari/537.36')
 	_WD_CapabilitiesAdd('args', 'user-data-dir', @LocalAppDataDir & '\Google\Chrome\User Data\WD_Testing_Profile')
 	_WD_CapabilitiesAdd('args', '--profile-directory', Default)
+	#REFERENCES https://peter.sh/experiments/chromium-command-line-switches
+	#REFERENCES https://peter.sh/experiments/chromium-command-line-switches
 	_WD_CapabilitiesAdd('args', 'start-maximized')
 	_WD_CapabilitiesAdd('args', 'disable-infobars')
 	_WD_CapabilitiesAdd('args', '--no-sandbox')
@@ -175,24 +174,28 @@ Func _WD_SetupChrome($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	_WD_CapabilitiesAdd('args', '--disable-web-security')
 	_WD_CapabilitiesAdd('args', '--allow-running-insecure-content')     ; https://stackoverflow.com/a/60409220
 	_WD_CapabilitiesAdd('args', '--ignore-certificate-errors')     ; https://stackoverflow.com/a/60409220
-	_WD_CapabilitiesAdd('args', '--guest')
+;~ 	_WD_CapabilitiesAdd('args', '--guest') ; "--guest" can't be combined with "download.default_directory" ; https://stackoverflow.com/a/76543532/5314940
 	If $bHeadless Then _
 			_WD_CapabilitiesAdd('args', '--headless')
+;~ 	If IsAdmin() Then _
+;~ 			_WD_CapabilitiesAdd('args', '--elevate')
 	If IsAdmin() Then _
 			_WD_CapabilitiesAdd('args', '--do-not-de-elevate')
 
 	_WD_CapabilitiesAdd('prefs', 'credentials_enable_service', False)     ; https://www.autoitscript.com/forum/topic/191990-webdriver-udf-w3c-compliant-version-12272021/?do=findComment&comment=1464829
 	_WD_CapabilitiesAdd('prefs', 'profile.password_manager_enabled', False)     ; https://sqa.stackexchange.com/a/26515/14581
+	_WD_CapabilitiesAdd('prefs', 'profile.default_content_settings.popups', 0)
 	#Region - downloading files
 	If $s_Download_dir Then
-		_WD_CapabilitiesAdd('prefs', 'download.default_directory', $s_Download_dir)
+		_WD_CapabilitiesAdd('prefs', 'download.default_directory', $s_Download_dir) ; https://stackoverflow.com/a/42943611/5314940
 
 		; https://scripteverything.com/download-pdf-selenium-python/
 		; https://www.autoitscript.com/forum/topic/209816-download-pdf-file-while-using-webdriver/?do=findComment&comment=1514582
+		_WD_CapabilitiesAdd('prefs', 'download.extensions_to_open', True)
+		_WD_CapabilitiesAdd('prefs', 'download.directory_upgrade', True)
 		_WD_CapabilitiesAdd('prefs', 'download.prompt_for_download', False)
 		_WD_CapabilitiesAdd('prefs', 'download.open_pdf_in_system_reader', False)
 		_WD_CapabilitiesAdd('prefs', 'plugins.always_open_pdf_externally', True)
-		_WD_CapabilitiesAdd('prefs', 'profile.default_content_settings.popups', 0)
 	EndIf
 	#EndRegion - downloading files
 
@@ -204,7 +207,7 @@ Func _WD_SetupChrome($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 
 	Local $sCapabilities = _WD_CapabilitiesGet()
 	Return $sCapabilities
-EndFunc   ;==>SetupChrome
+EndFunc   ;==>_WD_SetupChrome
 
 Func _WD_SetupEdge($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
@@ -254,7 +257,7 @@ Func _WD_SetupEdge($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 
 	Local $sCapabilities = _WD_CapabilitiesGet()
 	Return $sCapabilities
-EndFunc   ;==>SetupEdge
+EndFunc   ;==>_WD_SetupEdge
 
 Func _WD_SetupOpera($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 	Local $sTimeStamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN & @SEC
@@ -317,7 +320,7 @@ Func _WD_SetupOpera($bHeadless, $s_Download_dir = '', $bLogToFile = False)
 
 	Local $sCapabilities = _WD_CapabilitiesGet()
 	Return $sCapabilities
-EndFunc   ;==>SetupOpera
+EndFunc   ;==>_WD_SetupOpera
 
 Func _WD_SetupEdgeIEMode($bHeadless, $s_Download_dir = '', $bLogToFile = False) ; this is for MS Edge IE Mode
 	#forceref $bHeadless, $s_Download_dir ; it is Not passed from MSEdge To IE instance, like many others capabilities
@@ -343,6 +346,6 @@ Func _WD_SetupEdgeIEMode($bHeadless, $s_Download_dir = '', $bLogToFile = False) 
 	_WD_CapabilitiesDump(@ScriptLineNumber)
 	Local $sCapabilities = _WD_CapabilitiesGet()
 	Return $sCapabilities
-EndFunc   ;==>SetupEdgeIEMode
+EndFunc   ;==>_WD_SetupEdgeIEMode
 
 #EndRegion - WD SETUP
