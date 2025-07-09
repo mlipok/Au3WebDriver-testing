@@ -129,13 +129,13 @@ Func _WD_SetupGecko($bHeadless, $s_Download_dir = '')
 			In other words this means that the configured level will coalesce entries from all lower bands including itself. If you set the log level to error, you will get log entries for both fatal and error. Similarly for trace, you will get all the logs that are offered.
 		#CE https://firefox-source-docs.mozilla.org/testing/geckodriver/TraceLogs.html
 
-;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'fatal')
-;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'error')
-;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'warn')
-;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'info')
-;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'config')
-		_WD_CapabilitiesAdd( 'log', 'level', 'debug')
-;~ 		_WD_CapabilitiesAdd( 'log', 'level', 'trace')
+;~ 		_WD_CapabilitiesAdd('log', 'level', 'fatal')
+;~ 		_WD_CapabilitiesAdd('log', 'level', 'error')
+;~ 		_WD_CapabilitiesAdd('log', 'level', 'warn')
+;~ 		_WD_CapabilitiesAdd('log', 'level', 'info')
+;~ 		_WD_CapabilitiesAdd('log', 'level', 'config')
+		_WD_CapabilitiesAdd('log', 'level', 'debug')
+;~ 		_WD_CapabilitiesAdd('log', 'level', 'trace')
 	EndIf
 
 	; REMARKS
